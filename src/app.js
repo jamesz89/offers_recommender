@@ -21,7 +21,7 @@ const PORT = 3000;
 
 //Routes
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.send("<h1>Offers Recommender API</h1> <span>by James</span>");
 });
 
 app.get("/offers", async (req, res) => {
@@ -36,24 +36,55 @@ app.get("/offers", async (req, res) => {
       error: "not enough products to recommend",
     });
   }
-  snapshot.forEach((doc) => data.push(doc.data()));
-  res.json(data);
+  snapshot.forEach((doc) =>
+    data.push({
+      brand: doc.data().brand,
+      categoryId: doc.data().categoryId,
+      imageUrl: doc.data().imageUrl,
+      name: doc.data().name,
+      offerPrice: doc.data().offerPrice,
+      price: doc.data().price,
+      priceDifference: doc.data().priceDifference,
+      priceDifferencePercentage: doc.data().priceDifferencePercentage,
+      sku: doc.data().sku,
+      url: doc.data().url,
+    })
+  );
+  res.status(200).json(data);
 });
 
 app.get("/offersByCategory/:id", async (req, res) => {
-  let data = []
-  let id = req.params.id
-  const productsRef = db.collection("productsWithOffers")
-  const snapshot = await productsRef.where('categoryId', '==', id).orderBy("priceDifferencePercentage", "desc").limit(12).get()
+  let data = [];
+  let id = req.params.id;
+  const productsRef = db.collection("productsWithOffers");
+  const snapshot = await productsRef
+    .where("categoryId", "==", id)
+    .orderBy("priceDifferencePercentage", "desc")
+    .limit(12)
+    .get();
   if (snapshot.empty) {
     return res.status(404).json({
       error: "not enough products to recommend",
-    })
+    });
   }
-  snapshot.forEach((doc) => data.push(doc.data()))
-  res.status(200).json(data)
+  snapshot.forEach((doc) =>
+    data.push({
+      brand: doc.data().brand,
+      categoryId: doc.data().categoryId,
+      imageUrl: doc.data().imageUrl,
+      name: doc.data().name,
+      offerPrice: doc.data().offerPrice,
+      price: doc.data().price,
+      priceDifference: doc.data().priceDifference,
+      priceDifferencePercentage: doc.data().priceDifferencePercentage,
+      sku: doc.data().sku,
+      url: doc.data().url,
+    })
+  );
+  res.status(200).json(data);
 });
 
+//Open PORT
 app.listen(PORT, () => {
   console.log(`Express started on port ${PORT} `);
 });
