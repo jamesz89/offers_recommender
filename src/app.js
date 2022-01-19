@@ -22,7 +22,16 @@ app.get('/', (req, res) => {
 })
 
 app.get('/offers', async (req, res) => {
-  //returns a json with 12 products that have offers ordered by amount of difference between offerPrice and price
+  let data = []
+  const productsRef = db.collection('productsWithOffers')
+  const snapshot = await productsRef.orderBy('priceDifferencePercentage', 'desc').limit(12).get()
+  if (snapshot.empty) {
+    return res.status(404).json({
+      error: 'not enough products to recommend'
+    })
+  }
+  snapshot.forEach(doc => data.push(doc.data()))
+  res.json(data)
 })
 
 app.get('/offersByCategory:id', async (req, res) => {
