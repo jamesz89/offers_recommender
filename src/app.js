@@ -32,7 +32,7 @@ console.log("DB connection established");
 
 //init express server
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 //Routes
 app.get("/", (req, res) => {
