@@ -3,6 +3,7 @@ import 'dotenv/config'
 import express from "express";
 import { initializeApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
+import cors from "cors"
 
 //Google Firebase credentials
 const { private_key } = JSON.parse(process.env.PRIVATE_KEY)
@@ -19,7 +20,6 @@ const serviceAccount = {
   auth_provider_x509_cert_url: process.env.AUTH_PROVIDER_X509_CERT_URL,
   client_x509_cert_url: process.env.CLIENT_X509_CERT_URL
 }
-console.log(process.env.TYPE)
 
 //init database connection
 initializeApp({
@@ -33,6 +33,9 @@ console.log("DB connection established");
 //init express server
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+//Middleware
+app.use(cors())
 
 //Routes
 app.get("/", (req, res) => {
